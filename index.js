@@ -2,15 +2,23 @@ const express = require('express');
 
 const app = express();
 
-const outputs = [false, false, false, false, false, false, false, false, false, false, false, false];
+const boards = {
+  board1: {
+    outputs: [false, false, false, false, false, false, false, false, false, false, false, false]
+  },
+  board2: {
+    outputs: [false, false, false, false, false, false, false, false, false, false, false, false]
+  }
+};
 
 // Endpoint to get the status of an output
 app.get('/status', (req, res) => {
   const { id, output } = req.query;
   const outputIndex = parseInt(output) - 1;
 
-  if (id === 'board1' && outputIndex >= 0 && outputIndex < outputs.length) {
-    const status = outputs[outputIndex] ? 'ON' : 'OFF';
+  const board = boards[id];
+  if (board && outputIndex >= 0 && outputIndex < board.outputs.length) {
+    const status = board.outputs[outputIndex] ? 'ON' : 'OFF';
     res.send(status);
   } else {
     res.status(404).send('Output not found');
@@ -22,8 +30,9 @@ app.get('/on', (req, res) => {
   const { id, output } = req.query;
   const outputIndex = parseInt(output) - 1;
 
-  if (id === 'board1' && outputIndex >= 0 && outputIndex < outputs.length) {
-    outputs[outputIndex] = true;
+  const board = boards[id];
+  if (board && outputIndex >= 0 && outputIndex < board.outputs.length) {
+    board.outputs[outputIndex] = true;
     res.send('Output turned on');
   } else {
     res.status(404).send('Output not found');
@@ -35,8 +44,9 @@ app.get('/off', (req, res) => {
   const { id, output } = req.query;
   const outputIndex = parseInt(output) - 1;
 
-  if (id === 'board1' && outputIndex >= 0 && outputIndex < outputs.length) {
-    outputs[outputIndex] = false;
+  const board = boards[id];
+  if (board && outputIndex >= 0 && outputIndex < board.outputs.length) {
+    board.outputs[outputIndex] = false;
     res.send('Output turned off');
   } else {
     res.status(404).send('Output not found');
